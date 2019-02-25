@@ -13,15 +13,36 @@ code {
     monospace;
 }
 
-li {
-  border: 1px solid black;
+.change-cursor {
+  cursor: pointer;
 }
-
-.inlineDisplay {
+.fill-remaining-width {
+  flex: 1;
+}
+.inline-display {
   display: inline;
 }
 
-.smallBut {
-  padding: 1px;
-  margin-bottom: 1px;
+.margin-auto {
+  margin: auto;
+}
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+.delete-button {
+  color: red;
+}
+.increase-size{
+  font-size: 1.2rem;
+}
+.delete-button:hover {
+  color: #511111;
+}
+
+div.highlight-element:hover, div.highlight-element.every-two:hover {
+  background-color: #a4c5f9;
+}
+div.every-two:nth-child(2n) {
+  background-color: #efefef;
 }
