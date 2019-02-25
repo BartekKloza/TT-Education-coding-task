@@ -10,6 +10,8 @@ export default class UserData extends Component {
         users: [],
         showNewModal: false,
         showModal: false,
+        showAlert: false,
+        alertMessage: "",
         formData: {
             id: 0,
             email: "",
@@ -39,7 +41,6 @@ export default class UserData extends Component {
             this.setState({
                 users: newUsers
             });
-            console.log(newUsers);
         })
     }
 
@@ -137,25 +138,63 @@ export default class UserData extends Component {
 
     handleNewUserButton = () => {
         this.setState({
-            showNewModal: true
+            showNewModal: true,
+            showAlert: false
         });
+        
+    }
+
+    validateFields = () => {
+        let fieldsCorrect = true;
+        this.state.users.map((user) => {
+            if(user.id==this.state.newFormData.id){
+                this.setState({
+                    showAlert: true,
+                    alertMessage: "This ID already exists in the user database."
+                });
+                fieldsCorrect = false;
+            }
+        })
+        if(isNaN(this.state.newFormData.id)){
+            this.setState({
+                showAlert: true,
+                alertMessage: "User ID can only contain numbers"
+            });
+            fieldsCorrect = false;
+        }
+        return fieldsCorrect;
     }
 
     handleNewUserSubmit = () => {
-        let newUser = this.state.newFormData;
-        let updatedUsers = this.state.users
-        updatedUsers.push(newUser);
-        this.setState({
-            users: updatedUsers,
-            showNewModal: false
-        })
-        this.addUser(newUser);
-
+        let validated = this.validateFields();
+        if(validated){
+            let newUser = this.state.newFormData;
+            let updatedUsers = this.state.users
+            updatedUsers.push(newUser);
+            this.setState({
+                users: updatedUsers,
+                showNewModal: false
+            })
+            this.addUser(newUser);
+        }
+        else{
+            this.setState({
+                showAlert: true
+            })
+        }
+    }
+    
+    displayAlert = (alertMessage) => {
+        if(this.state.showAlert){
+            return (<div className="alert alert-danger">
+                        <strong>Error!</strong> {alertMessage}
+                    </div>)
+        }
     }
 
     render() {
-        const listElements = this.state.users.map((user) => 
-            <div className="every-two highlight-element flex-container change-cursor">
+        const listElements = this.state.users.map((user, index) => 
+            <div key={index} className="every-two highlight-element flex-container change-cursor">
                 <div data-id={user.id} onClick={this.handleUserClick} className="fill-remaining-width " data-toggle="modal" data-target="#exampleModal">
                     <p className="inline-display pl-0">{user.id}. </p>
                     <p className="inline-display ">{user.first} </p>
@@ -165,7 +204,7 @@ export default class UserData extends Component {
                     <p className="inline-display ">X</p>
                 </div>
             </div>
-                
+            
         );
         return (
             <div className="row">
@@ -240,6 +279,8 @@ export default class UserData extends Component {
                         <Modal.Title>Create New User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                    {this.displayAlert(this.state.alertMessage)}
+                    
                     <form>
                         <div className="form-group">
                             <label>User ID</label>
